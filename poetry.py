@@ -3,11 +3,8 @@ import json
 from bs4 import BeautifulSoup
 
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-exportJson = {}
-exportJsonTwo = {}
 poetryFoundation = 2276
 PFStart = 1
-
 
 def pageOne(letter = 'a'):
     print("Page 1 starting now! On letter: " + letter)
@@ -16,6 +13,7 @@ def pageOne(letter = 'a'):
     links = soup.find_all("div", {"class": "col blocks grid_3_of_12"})
     names = []
     linksAdd = []
+    exportJson = {}
 
     for i in links:
         names.append(i.find_all('a')[0].contents[0])
@@ -48,58 +46,91 @@ def pageOne(letter = 'a'):
         with open('Site1.json', 'w') as f2:
             json.dump(data, f2)
 
-def pageTwo():
-    print("Page two starting now!")
-    pageTwo = requests.get('https://www.poetryinternationalonline.com/alphabetical/m/', 'html.parser')
-    # soupTwo = BeautifulSoup(pageTwo.text, "html.parser")
-    # poems = soupTwo.find("ul", {"class" : "poet-container"})
-    # namesTwo = []
-    # linksTwo = []
-    # bios = []
-    # bioBuild = []
-    # countries = []
-    # poemsTwo = []
-    # count = 0
-    # for ents in poems:
-    #     if("href" in str(ents)):
-    #         r = ents.find('a')
-    #         namesTwo.append(r.contents[0])
-    #         linksTwo.append(r['href'])
-    # bios = poems.find_all('li', {"class" : "poet"})
-    # for allBios in bios:
-    #     if(not isinstance(allBios, list)):
-    #         if(allBios.find('span')):
-    #             bioBuild.append(allBios.find('span').contents)
-    #         bioBuild.append(allBios.find('p').contents)
-    #         bios.append(bioBuild)
-    #         bioBuild = []
-    # for link in linksTwo:
-    #     newPageTwo = requests.get(link, 'html.parser')
-    #     newSoupTwo = BeautifulSoup(newPageTwo.text, "html.parser")
-    #     countries.append(newSoupTwo.find("div", {"class" : "col span_12 section-title blog-title"}).find('a').contents)
-    # exportJsonTwo['bio'] = bios
-    # exportJsonTwo['country'] = countries
-    # exportJsonTwo['name'] = namesTwo
-    # exportJsonTwo['poem'] =
+# def pageTwo(letter = 'a'):
+#     print("Hello World")
+#     pageTwo = requests.get('https://www.poetryinternationalonline.com/alphabetical/m/', 'html.parser')
+#     soupTwo = BeautifulSoup(pageTwo.text, "html.parser")
+#     poems = soupTwo.find("ul", {"class" : "poet-container"})
+#     namesTwo = []
+#     linksTwo = []
+#     bios = []
+#     bioBuild = []
+#     countries = []
+#     poemsTwo = []
+#     exportJsonTwo = {}
+#     count = 0
+#     for ents in poems:
+#         if("href" in str(ents)):
+#             r = ents.find('a')
+#             namesTwo.append(r.contents[0])
+#             linksTwo.append(r['href'])
+#     bios = poems.find_all('li', {"class" : "poet"})
+#     for allBios in bios:
+#         if(not isinstance(allBios, list)):
+#             if(allBios.find('span')):
+#                 bioBuild.append(allBios.find('span').contents)
+#             bioBuild.append(allBios.find('p').contents)
+#             bios.append(bioBuild)
+#             bioBuild = []
+#     for link in linksTwo:
+#         newPageTwo = requests.get(link, 'html.parser')
+#         newSoupTwo = BeautifulSoup(newPageTwo.text, "html.parser")
+#         countries.append(newSoupTwo.find("div", {"class" : "col span_12 section-title blog-title"}).find('a').contents)
+#     exportJsonTwo['bio'] = bios
+#     exportJsonTwo['country'] = countries
+#     exportJsonTwo['name'] = namesTwo
+#     # exportJsonTwo['poem'] =
+#
+#     with open('Site2.json') as f:
+#         data = json.load(f)
+#         temp = data['Outside']
+#         temp.append(exportJsonTwo)
+#     with open('Site2.json', 'w') as f2:
+#         json.dump(data, f2)
 
-def pageThree():
+def pageThree(letter = 'a'):
     print("Page three starting now!")
-    pageThree = requests.get('https://www.poetryfoundation.org/poems/browse#page=1', 'html.parser')
+    pageThree = requests.get('https://www.poetryfoundation.org/poems/browse#page=1&sort_by=title&letter=a', 'html.parser')
     soupThree = BeautifulSoup(pageThree.text, 'html.parser')
+
+    linksAdd = []
+    names = []
+    exportJson = {}
+
+    links = soupThree.find_all("div", {"class": "o-grid-col o-grid-col_9of12"})
+
+    for i in links:
+        names.append(i.find_all('a')[0].contents[0])
+        linksAdd.append(i.find_all('a')[0])
+    for j in linksAdd:
+        print("Exploring next link: " + str(j))
+    print("breakPoint")
+
+
 
 def pageFour():
     print("Page Four starting now!")
-    pageFour = requests.get('https://poetryeastwest.com/category/authors/', 'html.parser')
-    soupFour = BeautifulSoup(pageFour.text, 'html.parser')
+
+    linksAdd = []
+    names = []
+    exportJson = {}
+    nextLink = 'https://poetryeastwest.com/2020/10/25/poetry-from-china/'
+    while (nextLink != None):
+        nextLink = requests.get(nextLink, 'html.parser')
+        soupFour = BeautifulSoup(nextLink.text, 'html.parser')
+        soupFour.find("div", {"class": "nav-previous"})
+
+
+    pageFour = requests.get('https://poetryeastwest.com/2020/10/25/poetry-from-china/', 'html.parser')
+
 
 def main():
-    for char in alphabet:
-        pageOne(char)
+    # for char in alphabet:
+    #     pageOne(char)
 
-    pageTwo()
-
-    pageThree()
-
+    # pageTwo() ---- Not yet working
+    # pageOne('a')
+    # pageThree()
     pageFour()
 
 
