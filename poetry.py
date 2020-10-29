@@ -1,5 +1,6 @@
 import requests
 import json
+import csv
 from bs4 import BeautifulSoup
 
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
@@ -7,6 +8,7 @@ poetryFoundation = 2276
 PFStart = 1
 exportJsonTwo = { 'bios' : [""], 'country' : [""], 'name' : [""], 'poem' : [""] }
 exportJsonThree = { 'bios' : [""], 'name' : [""], 'poem' : [""], 'poet' : [""] }
+Site3Col = ["bios", "name", "poem", "poet"]
 
 def pageOne(letter = 'a'):
     print("Page 1 starting now! On letter: " + letter)
@@ -104,10 +106,21 @@ def pageTwo(letter = 'a'):
     for pm in poemsTwo:
         exportJsonTwo['poem'].append(pm)
 
+    with open('CSV_Site2.csv', 'w') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=Site3Col)
+        writer.writeheader()
+        tempDict = { 'bios' : [""], 'country' : [""], 'name' : [""], 'poem' : [""] }
+        for x in range(0, len(exportJsonTwo['bios'])):
+            tempDict['bios'] = exportJsonTwo['bios'][x]
+            tempDict['country'] = exportJsonTwo['country'][x]
+            tempDict['name'] = exportJsonTwo['name'][x]
+            tempDict['poem'] = exportJsonTwo['poem'][x]
+            writer.writerow(tempDict)
 
-def pageThree(letter = 'a'):
+
+def pageThree(number = 1):
     print("Page three starting now!")
-    pageThree = requests.get('https://www.poetryfoundation.org/poems/browse#page=1&sort_by=title', 'html.parser')
+    pageThree = requests.get('https://www.poetryfoundation.org/ajax/poems?page=" + str(number) + "&sort_by=recently_added', 'html.parser')
     soupThree = BeautifulSoup(pageThree.text, 'html.parser')
 
     linksAdd = []
@@ -116,15 +129,16 @@ def pageThree(letter = 'a'):
     poets = []
     bios = []
 
+    text = json.loads(soupThree.text)
     exportJson = {}
-    links = soupThree.find_all("div", {"class": "c-feature-hd"})
     skip = False
-    for i in links:
-        linksAdd.append(i.find_all('a')[0])
-    for j in linksAdd:
+    links = []
+    print(text["Entries"])
+    for i in text['Entries']:
+        linksAdd.append(i['link'])
+    for url in linksAdd:
         skip = False
-        print("Exploring next link: " + str(j))
-        url = j['href']
+        print("Exploring next link: " + str(url))
         newPage = requests.get(url, 'html.parser')
         newSoup = BeautifulSoup(newPage.text, "html.parser")
         testForPoem = newSoup.find_all("div", {"style" : "text-indent: -1em; padding-left: 1em;"})
@@ -156,34 +170,30 @@ def pageThree(letter = 'a'):
     for poet in poets:
         exportJsonThree['poet'].append(poet)
 
-    print("breakPoint")
+    print("----------------------------------------------------------------------")
+    with open('CSV_Site3.csv', 'w') as csvfile:
+        writer = csv.DictWriter(csvfile, fieldnames=Site3Col)
+        writer.writeheader()
+        tempDict = { 'bios' : [""], 'name' : [""], 'poem' : [""], 'poet' : [""] }
+        for x in range(0, len(exportJsonThree['bios'])):
+            tempDict['bios'] = exportJsonThree['bios'][x]
+            tempDict['name'] = exportJsonThree['name'][x]
+            tempDict['poem'] = exportJsonThree['poem'][x]
+            tempDict['poet'] = exportJsonThree['poet'][x]
+            writer.writerow(tempDict)
 
 
-
-def pageFour():
-    print("Page Four starting now!")
-
-    linksAdd = []
-    names = []
-    exportJson = {}
-    nextLink = 'https://poetryeastwest.com/2020/10/25/poetry-from-china/'
-    while (nextLink != None):
-        nextLink = requests.get(nextLink, 'html.parser')
-        soupFour = BeautifulSoup(nextLink.text, 'html.parser')
-        soupFour.find("div", {"class": "nav-previous"})
-
-
-    pageFour = requests.get('https://poetryeastwest.com/2020/10/25/poetry-from-china/', 'html.parser')
+    # pageFour = requests.get('https://poetryeastwest.com/2020/10/25/poetry-from-china/', 'html.parser')
 
 
 def main():
     print("Main")
-    # for char in alphabet:
-        # pageOne(char)
-    # for char in alphabet:
-    #     pageTwo(char)
-    pageThree()
-    # pageFour()
+    for char in alphabet:
+        pageOne(char)
+    for char in alphabet:
+        pageTwo(char)
+    for x in range(1, 2276):
+        pageThree(x)
 
 
 main()
