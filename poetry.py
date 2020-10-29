@@ -6,6 +6,7 @@ alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n'
 poetryFoundation = 2276
 PFStart = 1
 exportJsonTwo = { 'bios' : [""], 'country' : [""], 'name' : [""], 'poem' : [""] }
+exportJsonThree = { 'bios' : [""], 'name' : [""], 'poem' : [""], 'poet' : [""] }
 
 def pageOne(letter = 'a'):
     print("Page 1 starting now! On letter: " + letter)
@@ -106,20 +107,55 @@ def pageTwo(letter = 'a'):
 
 def pageThree(letter = 'a'):
     print("Page three starting now!")
-    pageThree = requests.get('https://www.poetryfoundation.org/poems/browse#page=4&sort_by=title', 'html.parser')
+    pageThree = requests.get('https://www.poetryfoundation.org/poems/browse#page=1&sort_by=title', 'html.parser')
     soupThree = BeautifulSoup(pageThree.text, 'html.parser')
 
     linksAdd = []
     names = []
+    poems = []
+    poets = []
+    bios = []
+
     exportJson = {}
-
     links = soupThree.find_all("div", {"class": "c-feature-hd"})
-
+    skip = False
     for i in links:
-        names.append(i.find_all('a')[0].contents[0])
         linksAdd.append(i.find_all('a')[0])
     for j in linksAdd:
+        skip = False
         print("Exploring next link: " + str(j))
+        url = j['href']
+        newPage = requests.get(url, 'html.parser')
+        newSoup = BeautifulSoup(newPage.text, "html.parser")
+        testForPoem = newSoup.find_all("div", {"style" : "text-indent: -1em; padding-left: 1em;"})
+        if (testForPoem != []):
+            poem = newSoup.find_all("div", {"style": "text-indent: -1em; padding-left: 1em;"})
+            poemString = ""
+            for line in poem:
+                poemString = poemString + str(line.contents)
+            poems.append(poemString)
+
+            names.append(newSoup.find_all("h1", {"class" : "c-hdgSans c-hdgSans_2 c-mix-hdgSans_inline"})[0].contents)
+        else:
+            skip = True
+        if (not skip):
+            bioLink = newSoup.find_all("span", {"class": "c-txt c-txt_attribution"})[0].find('a')
+            link = bioLink['href']
+            print(link)
+            newnewPage = requests.get(link, 'html.parser')
+            newnewSoup = BeautifulSoup(newPage.text, "html.parser")
+            bioSection = newnewSoup.find_all("div", {"class": "c-feature-bd c-feature-bd_moderate"})[0].find('p').contents
+            bios.append(bioSection)
+            poets.append(bioLink.contents[0])
+    for  bio in bios:
+        exportJsonThree['bios'].append(bio)
+    for name in names:
+        exportJsonThree['name'].append(name)
+    for pm in poems:
+        exportJsonThree['poem'].append(pm)
+    for poet in poets:
+        exportJsonThree['poet'].append(poet)
+
     print("breakPoint")
 
 
@@ -141,13 +177,12 @@ def pageFour():
 
 
 def main():
+    print("Main")
     # for char in alphabet:
-    #     pageOne(char)
-    for char in alphabet:
-        pageTwo(char)
-
-    print("Breakpoint Catch")
-    # pageThree()
+        # pageOne(char)
+    # for char in alphabet:
+    #     pageTwo(char)
+    pageThree()
     # pageFour()
 
 
