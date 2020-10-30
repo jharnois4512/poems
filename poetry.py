@@ -161,12 +161,17 @@ def pageThree(number):
             if bioLink != None:
                 link = bioLink['href']
                 if (link != None):
+                    poets.append(bioLink.contents[0])
                     print(link)
                     newnewPage = requests.get(link, 'html.parser')
                     newnewSoup = BeautifulSoup(newPage.text, "html.parser")
-                    bioSection = newnewSoup.find_all("div", {"class": "c-feature-bd c-feature-bd_moderate"})[0].find('p').contents
-                    bios.append(bioSection)
-                    poets.append(bioLink.contents[0])
+                    bioSection = newnewSoup.find_all("div", {"class": "c-feature-bd c-feature-bd_moderate"})
+                    if (bioSection != []):
+                        bioSection = (bioSection[0].find('p').contents)
+                        bios.append(bioSection)
+                    else:
+                        print('no Bio for you')
+                        bios.append("")
                 else:
                     print('no Bio for you')
                     bios.append("")
