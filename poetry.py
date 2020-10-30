@@ -4,8 +4,6 @@ import csv
 from bs4 import BeautifulSoup
 
 alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
-poetryFoundation = 2276
-PFStart = 1
 exportJsonTwo = { 'bios' : [""], 'country' : [""], 'name' : [""], 'poem' : [""] }
 Site3Col = ["bios", "name", "poem", "poet"]
 Site2Col = ['bios', 'country', 'name', 'poem']
@@ -121,11 +119,12 @@ def pageTwo(letter = 'a'):
             writer.writerow(tempDict)
 
 
-def pageThree(number = 1):
+def pageThree(number):
     print("Page three starting now!")
     exportJsonThree = {'bios': [""], 'name': [""], 'poem': [""], 'poet': [""]}
-    print('https://www.poetryfoundation.org/ajax/poems?page='+ str(number))
-    pageThree = requests.get('https://www.poetryfoundation.org/ajax/poems?page='+ str(number), 'html.parser')
+    url1 = 'https://www.poetryfoundation.org/ajax/poems?page='+ str(number)
+    print(url1)
+    pageThree = requests.get(url1, 'html.parser')
     soupThree = BeautifulSoup(pageThree.text, 'html.parser')
 
     linksAdd = []
@@ -171,6 +170,11 @@ def pageThree(number = 1):
                 else:
                     print('no Bio for you')
                     bios.append("")
+                    poets.append("")
+            else:
+                print('no Bio for you')
+                bios.append("")
+                poets.append("")
 
     for  bio in bios:
         exportJsonThree['bios'].append(bio)
@@ -184,7 +188,6 @@ def pageThree(number = 1):
     print("----------------------------------------------------------------------")
     with open('CSV_Site3.csv', 'a',encoding='utf-8') as csvfile:
         writer = csv.DictWriter(csvfile, fieldnames=Site3Col)
-        writer.writeheader()
         tempDict = { 'bios' : [""], 'name' : [""], 'poem' : [""], 'poet' : [""] }
         for x in range(0, len(exportJsonThree['bios'])):
             tempDict['bios'] = exportJsonThree['bios'][x]
@@ -205,7 +208,7 @@ def main():
     #     pageTwo(char)
     for x in range(1, 2276):
         print(x)
-        pageThree(5)
+        pageThree(x)
 
 
 main()
