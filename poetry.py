@@ -207,11 +207,11 @@ def pageThree(number):
 
 def main():
     print("Main")
-    # for char in alphabet:
-    #     pageOne(char)
-    # for char in alphabet:
-    #     pageTwo(char)
-    for x in range(1, 2276):
+    for char in alphabet:
+        pageOne(char)
+    for char in alphabet:
+        pageTwo(char)
+    for x in range(861, 2276):
         print(x)
         pageThree(x)
 
