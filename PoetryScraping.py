@@ -46,11 +46,7 @@ def pageOne(letter = 'a'):
         exportJson['location'] = str(country)
         exportJson['poem'] = str(poemContents)
 
-<<<<<<< HEAD:PoetryScraping.py
         with open('Data/CSV_Site1.csv', 'a', errors="ignore") as csvfile:
-=======
-        with open('CSV_Site1.csv', 'a', encoding='utf-8') as csvfile:
->>>>>>> parent of adf5173... Data Branch!:poetry.py
             writer = csv.DictWriter(csvfile, fieldnames=Site1Col)
             tempDict = {'bios': [""], 'location': [""],  'poem': [""] }
             tempDict['bios'] = exportJson['bios']
@@ -119,13 +115,7 @@ def pageTwo(letter = 'a'):
     for pm in poemsTwo:
         exportJsonTwo['poem'].append(pm)
 
-
-
-<<<<<<< HEAD:PoetryScraping.py
     with open('Data/CSV_Site2.csv', 'a', errors="ignore" ) as csvfile:
-=======
-    with open('CSV_Site2.csv', 'a',encoding='utf-8') as csvfile:
->>>>>>> parent of adf5173... Data Branch!:poetry.py
         writer = csv.DictWriter(csvfile, fieldnames=Site2Col)
         writer.writeheader()
         tempDict = { 'bios' : [""], 'country' : [""], 'name' : [""], 'poem' : [""] }
